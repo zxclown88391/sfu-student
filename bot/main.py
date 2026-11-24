@@ -45,6 +45,10 @@ log = logging.getLogger("sfu_student.bot")
 
 DIVIDER = "—"
 
+# Версия mini app: меняйте при обновлении файла, чтобы Telegram не показывал
+# закэшированную старую страницу.
+MINIAPP_VERSION = "4"
+
 
 class Setup(StatesGroup):
     institute = State()
@@ -88,6 +92,7 @@ def miniapp_url(user_id: int) -> str:
     api = public_api_base()
     if api:
         query.append(f"api={api}")
+    query.append(f"v={MINIAPP_VERSION}")
     return f"{page}{separator}{'&'.join(query)}"
 
 
@@ -97,7 +102,8 @@ def menu_button_url() -> str:
     if not page:
         return ""
     api = public_api_base()
-    return f"{page}?api={api}" if api else page
+    base = f"{page}?api={api}" if api else page
+    return f"{base}&v={MINIAPP_VERSION}" if "?" in base else f"{base}?v={MINIAPP_VERSION}"
 
 
 async def sync_menu_button(bot: Bot, user_id: int) -> None:
