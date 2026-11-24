@@ -358,6 +358,9 @@
   // ---------- сеть ----------
   async function api(path, options = {}) {
     const headers = Object.assign({}, options.headers || {});
+    // localtunnel (временный публичный адрес) отдаёт заглушку 511 браузерным запросам.
+    // Заголовок снимает заглушку; на обычных серверах он просто игнорируется.
+    headers["bypass-tunnel-reminder"] = "true";
     if (tg && tg.initData) headers["X-Telegram-Init-Data"] = tg.initData;
     if (TOKEN) headers["X-SFU-Token"] = TOKEN;
     if (options.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
