@@ -91,6 +91,37 @@ def miniapp_url(user_id: int) -> str:
     return f"{page}{separator}{'&'.join(query)}"
 
 
+def menu_button_url() -> str:
+    """Адрес mini app для кнопки меню чата (без токена: внутри Telegram придёт initData)."""
+    page = app_page_url()
+    if not page:
+        return ""
+    api = public_api_base()
+    return f"{page}?api={api}" if api else page
+
+
+async def sync_menu_button(bot: Bot, user_id: int) -> None:
+    """Кнопка меню задаётся в BotFather, и API её не переопределяет глобально.
+
+    Поэтому для каждого, кто открыл бота, ставим персональную кнопку с актуальным
+    адресом mini app. Ошибку не пробрасываем: это украшение, а не работа бота.
+    """
+    url = menu_button_url()
+    if not url or not url.startswith("https://"):
+        return
+    try:
+        await bot.set_chat_menu_button(
+            chat_id=user_id,
+            menu_button=types.MenuButtonWebApp(
+                type="web_app",
+                text="Расписание",
+                web_app=WebAppInfo(url=url),
+            ),
+        )
+    except Exception:
+        log.warning("Не удалось обновить кнопку меню для %s", user_id, exc_info=False)
+
+
 def app_button_row(user_id: int):
     url = miniapp_url(user_id)
     if not url:
@@ -264,6 +295,7 @@ async def run_bot():
     async def start(message: types.Message, state: FSMContext):
         user_id = message.from_user.id
         ensure_user(user_id, message.from_user.first_name or "", message.from_user.username or "")
+        await sync_menu_button(message.bot, user_id)
         user = get_user(user_id)
         if user and (user.get("api_name") or "").strip():
             await message.answer(
