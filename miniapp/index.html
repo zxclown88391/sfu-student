@@ -366,9 +366,18 @@
     if (options.body && !headers["Content-Type"]) headers["Content-Type"] = "application/json";
 
     let response;
-    try {
-      response = await fetch(API_BASE + path, Object.assign({}, options, { headers }));
-    } catch (error) {
+    let lastError;
+    // Три попытки: публичный туннель иногда рвёт соединение на секунду.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        response = await fetch(API_BASE + path, Object.assign({}, options, { headers }));
+        break;
+      } catch (error) {
+        lastError = error;
+        if (attempt < 2) await new Promise((resolve) => setTimeout(resolve, 700 * (attempt + 1)));
+      }
+    }
+    if (!response) {
       throw new Error("Нет связи с сервером. Проверь интернет и повтори.");
     }
     if (!response.ok) {
@@ -700,24 +709,33 @@
 
   async function boot() {
     applyTheme(initialTheme());
+    let profileLoaded = false;
     try {
       const data = await api("/api/me");
       state.user = data.user;
       state.favorites = data.favorites || [];
       applyTheme(initialTheme());
       renderFavorites();
+      profileLoaded = true;
     } catch (error) {
       showError(error.message);
-      // Без авторизации всё равно показываем выбор группы, если каталог доступен.
-      try { await loadCatalog(); showOnboarding(); } catch (_) {}
-      return;
     }
+
     try {
       await loadCatalog();
     } catch (error) {
       showError("Не удалось загрузить список групп: " + error.message);
     }
-    await afterLogin();
+
+    // Онбординг показываем только когда точно знаем, что группы нет.
+    // При сетевом сбое состояние профиля неизвестно — не сбрасываем выбор.
+    if (profileLoaded) {
+      await afterLogin();
+      return;
+    }
+    if (state.catalog.length) {
+      showOnboarding();
+    }
   }
 
   boot();

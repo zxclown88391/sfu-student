@@ -1,4 +1,4 @@
-import asyncio
+﻿import asyncio
 import logging
 import os
 import re
@@ -43,11 +43,11 @@ from schedule.sfu_client import (
 
 log = logging.getLogger("sfu_student.bot")
 
-DIVIDER = "—"
+DIVIDER = "вЂ”"
 
-# Версия mini app: меняйте при обновлении файла, чтобы Telegram не показывал
-# закэшированную старую страницу.
-MINIAPP_VERSION = "4"
+# Р’РµСЂСЃРёСЏ mini app: РјРµРЅСЏР№С‚Рµ РїСЂРё РѕР±РЅРѕРІР»РµРЅРёРё С„Р°Р№Р»Р°, С‡С‚РѕР±С‹ Telegram РЅРµ РїРѕРєР°Р·С‹РІР°Р»
+# Р·Р°РєСЌС€РёСЂРѕРІР°РЅРЅСѓСЋ СЃС‚Р°СЂСѓСЋ СЃС‚СЂР°РЅРёС†Сѓ.
+MINIAPP_VERSION = "5"
 
 
 class Setup(StatesGroup):
@@ -58,12 +58,12 @@ class Setup(StatesGroup):
 
 
 # --------------------------------------------------------------------------- #
-# Ссылка на mini app
+# РЎСЃС‹Р»РєР° РЅР° mini app
 # --------------------------------------------------------------------------- #
 
 
 def public_api_base() -> str:
-    """Публичный адрес API: отдаёт и /miniapp, и /api/*."""
+    """РџСѓР±Р»РёС‡РЅС‹Р№ Р°РґСЂРµСЃ API: РѕС‚РґР°С‘С‚ Рё /miniapp, Рё /api/*."""
     explicit = (os.getenv("PUBLIC_API_URL", "") or "").strip().rstrip("/")
     if explicit:
         return explicit
@@ -74,7 +74,7 @@ def public_api_base() -> str:
 
 
 def app_page_url() -> str:
-    """Страница mini app. Может жить отдельно от API — например, на GitHub Pages."""
+    """РЎС‚СЂР°РЅРёС†Р° mini app. РњРѕР¶РµС‚ Р¶РёС‚СЊ РѕС‚РґРµР»СЊРЅРѕ РѕС‚ API вЂ” РЅР°РїСЂРёРјРµСЂ, РЅР° GitHub Pages."""
     page = (os.getenv("MINIAPP_URL", "") or "").strip()
     if page:
         return page
@@ -83,7 +83,7 @@ def app_page_url() -> str:
 
 
 def miniapp_url(user_id: int) -> str:
-    """Ссылка с подписанным токеном: работает и в Telegram, и в обычном браузере."""
+    """РЎСЃС‹Р»РєР° СЃ РїРѕРґРїРёСЃР°РЅРЅС‹Рј С‚РѕРєРµРЅРѕРј: СЂР°Р±РѕС‚Р°РµС‚ Рё РІ Telegram, Рё РІ РѕР±С‹С‡РЅРѕРј Р±СЂР°СѓР·РµСЂРµ."""
     page = app_page_url()
     if not page:
         return ""
@@ -97,7 +97,7 @@ def miniapp_url(user_id: int) -> str:
 
 
 def menu_button_url() -> str:
-    """Адрес mini app для кнопки меню чата (без токена: внутри Telegram придёт initData)."""
+    """РђРґСЂРµСЃ mini app РґР»СЏ РєРЅРѕРїРєРё РјРµРЅСЋ С‡Р°С‚Р° (Р±РµР· С‚РѕРєРµРЅР°: РІРЅСѓС‚СЂРё Telegram РїСЂРёРґС‘С‚ initData)."""
     page = app_page_url()
     if not page:
         return ""
@@ -107,10 +107,10 @@ def menu_button_url() -> str:
 
 
 async def sync_menu_button(bot: Bot, user_id: int) -> None:
-    """Кнопка меню задаётся в BotFather, и API её не переопределяет глобально.
+    """РљРЅРѕРїРєР° РјРµРЅСЋ Р·Р°РґР°С‘С‚СЃСЏ РІ BotFather, Рё API РµС‘ РЅРµ РїРµСЂРµРѕРїСЂРµРґРµР»СЏРµС‚ РіР»РѕР±Р°Р»СЊРЅРѕ.
 
-    Поэтому для каждого, кто открыл бота, ставим персональную кнопку с актуальным
-    адресом mini app. Ошибку не пробрасываем: это украшение, а не работа бота.
+    РџРѕСЌС‚РѕРјСѓ РґР»СЏ РєР°Р¶РґРѕРіРѕ, РєС‚Рѕ РѕС‚РєСЂС‹Р» Р±РѕС‚Р°, СЃС‚Р°РІРёРј РїРµСЂСЃРѕРЅР°Р»СЊРЅСѓСЋ РєРЅРѕРїРєСѓ СЃ Р°РєС‚СѓР°Р»СЊРЅС‹Рј
+    Р°РґСЂРµСЃРѕРј mini app. РћС€РёР±РєСѓ РЅРµ РїСЂРѕР±СЂР°СЃС‹РІР°РµРј: СЌС‚Рѕ СѓРєСЂР°С€РµРЅРёРµ, Р° РЅРµ СЂР°Р±РѕС‚Р° Р±РѕС‚Р°.
     """
     url = menu_button_url()
     if not url or not url.startswith("https://"):
@@ -120,12 +120,12 @@ async def sync_menu_button(bot: Bot, user_id: int) -> None:
             chat_id=user_id,
             menu_button=types.MenuButtonWebApp(
                 type="web_app",
-                text="Расписание",
+                text="Р Р°СЃРїРёСЃР°РЅРёРµ",
                 web_app=WebAppInfo(url=url),
             ),
         )
     except Exception:
-        log.warning("Не удалось обновить кнопку меню для %s", user_id, exc_info=False)
+        log.warning("РќРµ СѓРґР°Р»РѕСЃСЊ РѕР±РЅРѕРІРёС‚СЊ РєРЅРѕРїРєСѓ РјРµРЅСЋ РґР»СЏ %s", user_id, exc_info=False)
 
 
 def app_button_row(user_id: int):
@@ -133,12 +133,12 @@ def app_button_row(user_id: int):
     if not url:
         return []
     if url.startswith("https://"):
-        return [[InlineKeyboardButton(text="Открыть приложение", web_app=WebAppInfo(url=url))]]
-    return [[InlineKeyboardButton(text="Открыть приложение (локально)", url=url)]]
+        return [[InlineKeyboardButton(text="РћС‚РєСЂС‹С‚СЊ РїСЂРёР»РѕР¶РµРЅРёРµ", web_app=WebAppInfo(url=url))]]
+    return [[InlineKeyboardButton(text="РћС‚РєСЂС‹С‚СЊ РїСЂРёР»РѕР¶РµРЅРёРµ (Р»РѕРєР°Р»СЊРЅРѕ)", url=url)]]
 
 
 # --------------------------------------------------------------------------- #
-# Клавиатуры
+# РљР»Р°РІРёР°С‚СѓСЂС‹
 # --------------------------------------------------------------------------- #
 
 
@@ -146,26 +146,26 @@ def main_keyboard(user_id: int):
     user = get_user(user_id)
     rows = []
     if not user or not (user.get("api_name") or "").strip():
-        rows.append([InlineKeyboardButton(text="Выбрать группу", callback_data="change_group")])
+        rows.append([InlineKeyboardButton(text="Р’С‹Р±СЂР°С‚СЊ РіСЂСѓРїРїСѓ", callback_data="change_group")])
     else:
         rows.extend([
             [
-                InlineKeyboardButton(text="Сегодня", callback_data="day:0"),
-                InlineKeyboardButton(text="Завтра", callback_data="day:1"),
+                InlineKeyboardButton(text="РЎРµРіРѕРґРЅСЏ", callback_data="day:0"),
+                InlineKeyboardButton(text="Р—Р°РІС‚СЂР°", callback_data="day:1"),
             ],
             [
-                InlineKeyboardButton(text="Сейчас", callback_data="now"),
-                InlineKeyboardButton(text="Неделя", callback_data="week"),
+                InlineKeyboardButton(text="РЎРµР№С‡Р°СЃ", callback_data="now"),
+                InlineKeyboardButton(text="РќРµРґРµР»СЏ", callback_data="week"),
             ],
-            [InlineKeyboardButton(text="Преподаватели", callback_data="teacher")],
+            [InlineKeyboardButton(text="РџСЂРµРїРѕРґР°РІР°С‚РµР»Рё", callback_data="teacher")],
         ])
     rows.extend(app_button_row(user_id))
     if user and (user.get("api_name") or "").strip():
         rows.append([
-            InlineKeyboardButton(text="Сервисы", callback_data="eios"),
-            InlineKeyboardButton(text="Настройки", callback_data="settings"),
+            InlineKeyboardButton(text="РЎРµСЂРІРёСЃС‹", callback_data="eios"),
+            InlineKeyboardButton(text="РќР°СЃС‚СЂРѕР№РєРё", callback_data="settings"),
         ])
-        rows.append([InlineKeyboardButton(text="Сменить группу", callback_data="change_group")])
+        rows.append([InlineKeyboardButton(text="РЎРјРµРЅРёС‚СЊ РіСЂСѓРїРїСѓ", callback_data="change_group")])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
@@ -184,16 +184,16 @@ def paged_keyboard(items, page: int, prefix: str, is_inst: bool = False):
         rows.append(row)
     nav = []
     if page:
-        nav.append(InlineKeyboardButton(text="Назад", callback_data=f"{prefix}_page:{page - 1}"))
+        nav.append(InlineKeyboardButton(text="РќР°Р·Р°Рґ", callback_data=f"{prefix}_page:{page - 1}"))
     nav.append(InlineKeyboardButton(text=f"{page + 1}/{pages}", callback_data="noop"))
     if page + 1 < pages:
-        nav.append(InlineKeyboardButton(text="Далее", callback_data=f"{prefix}_page:{page + 1}"))
+        nav.append(InlineKeyboardButton(text="Р”Р°Р»РµРµ", callback_data=f"{prefix}_page:{page + 1}"))
     rows.append(nav)
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
 # --------------------------------------------------------------------------- #
-# Отправка текста
+# РћС‚РїСЂР°РІРєР° С‚РµРєСЃС‚Р°
 # --------------------------------------------------------------------------- #
 
 
@@ -218,8 +218,8 @@ async def safe_answer(message, text: str, markup=None):
 
 def profile_line(user) -> str:
     if user and (user.get("api_name") or "").strip():
-        return f"<b>{esc(user['display_name'])}</b> · {esc(user['institute'])}"
-    return "Группа не выбрана"
+        return f"<b>{esc(user['display_name'])}</b> В· {esc(user['institute'])}"
+    return "Р“СЂСѓРїРїР° РЅРµ РІС‹Р±СЂР°РЅР°"
 
 
 async def send_schedule(message, user, mode: str, offset: int = 0, week=None):
@@ -227,9 +227,9 @@ async def send_schedule(message, user, mode: str, offset: int = 0, week=None):
     try:
         raw, stale, age = await get_lessons(user["api_name"], fallback_targets=fallbacks)
     except Exception:
-        log.exception("Расписание недоступно")
+        log.exception("Р Р°СЃРїРёСЃР°РЅРёРµ РЅРµРґРѕСЃС‚СѓРїРЅРѕ")
         await message.answer(
-            "Не удалось получить расписание СФУ. Попробуй через пару минут.",
+            "РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ СЂР°СЃРїРёСЃР°РЅРёРµ РЎР¤РЈ. РџРѕРїСЂРѕР±СѓР№ С‡РµСЂРµР· РїР°СЂСѓ РјРёРЅСѓС‚.",
             reply_markup=main_keyboard(user["user_id"]),
         )
         return
@@ -237,31 +237,31 @@ async def send_schedule(message, user, mode: str, offset: int = 0, week=None):
     warning = ""
     if stale:
         minutes = int(age.total_seconds() // 60) if age else 0
-        warning = f"\n\nСФУ сейчас недоступен, показаны сохранённые данные ({minutes} мин. назад)."
+        warning = f"\n\nРЎР¤РЈ СЃРµР№С‡Р°СЃ РЅРµРґРѕСЃС‚СѓРїРµРЅ, РїРѕРєР°Р·Р°РЅС‹ СЃРѕС…СЂР°РЅС‘РЅРЅС‹Рµ РґР°РЅРЅС‹Рµ ({minutes} РјРёРЅ. РЅР°Р·Р°Рґ)."
 
     if mode == "day":
         day, w, date_label = date_info(offset, week_override=week)
         title = (
-            f"{'Сегодня' if offset == 0 else 'Завтра'} — {date_label}\n"
-            f"{esc(user['display_name'])} · {DAYS_FULL[day]}"
+            f"{'РЎРµРіРѕРґРЅСЏ' if offset == 0 else 'Р—Р°РІС‚СЂР°'} вЂ” {date_label}\n"
+            f"{esc(user['display_name'])} В· {DAYS_FULL[day]}"
         )
         result = format_day(raw, day, w, title)
     else:
         w = str(week) if week in ("1", "2") else academic_week(datetime.now(SFU_TZ))
-        title = f"{'Нечётная' if w == '1' else 'Чётная'} неделя\n{esc(user['display_name'])}"
+        title = f"{'РќРµС‡С‘С‚РЅР°СЏ' if w == '1' else 'Р§С‘С‚РЅР°СЏ'} РЅРµРґРµР»СЏ\n{esc(user['display_name'])}"
         result = format_week(raw, w, title)
     await safe_answer(message, result + warning, main_keyboard(user["user_id"]))
 
 
 # --------------------------------------------------------------------------- #
-# Запуск
+# Р—Р°РїСѓСЃРє
 # --------------------------------------------------------------------------- #
 
 
 async def run_bot():
     bot_token = os.getenv("BOT_TOKEN", "").strip()
     if not bot_token:
-        raise SystemExit("Не найден BOT_TOKEN. Скопируйте .env.example в .env и укажите токен от BotFather.")
+        raise SystemExit("РќРµ РЅР°Р№РґРµРЅ BOT_TOKEN. РЎРєРѕРїРёСЂСѓР№С‚Рµ .env.example РІ .env Рё СѓРєР°Р¶РёС‚Рµ С‚РѕРєРµРЅ РѕС‚ BotFather.")
 
     init_db()
     bot = Bot(bot_token)
@@ -282,13 +282,13 @@ async def run_bot():
         try:
             catalog = await load_catalog()
         except Exception:
-            log.exception("Не удалось загрузить каталог")
-            await message.answer("Сейчас не удаётся загрузить список групп СФУ. Попробуй позже.")
+            log.exception("РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ РєР°С‚Р°Р»РѕРі")
+            await message.answer("РЎРµР№С‡Р°СЃ РЅРµ СѓРґР°С‘С‚СЃСЏ Р·Р°РіСЂСѓР·РёС‚СЊ СЃРїРёСЃРѕРє РіСЂСѓРїРї РЎР¤РЈ. РџРѕРїСЂРѕР±СѓР№ РїРѕР·Р¶Рµ.")
             return
         institutes = sorted(catalog)
         await state.update_data(institutes=institutes)
         await message.answer(
-            "Шаг 1 из 3. Выбери институт:",
+            "РЁР°Рі 1 РёР· 3. Р’С‹Р±РµСЂРё РёРЅСЃС‚РёС‚СѓС‚:",
             reply_markup=paged_keyboard(institutes, 0, "inst", True),
         )
         await state.set_state(Setup.institute)
@@ -305,12 +305,12 @@ async def run_bot():
         user = get_user(user_id)
         if user and (user.get("api_name") or "").strip():
             await message.answer(
-                f"SFU Student\n{profile_line(user)}\n\nЧто смотрим?",
+                f"SFU Student\n{profile_line(user)}\n\nР§С‚Рѕ СЃРјРѕС‚СЂРёРј?",
                 parse_mode="HTML",
                 reply_markup=main_keyboard(user_id),
             )
             return
-        await message.answer("SFU Student — расписание, преподаватели и сервисы СФУ.")
+        await message.answer("SFU Student вЂ” СЂР°СЃРїРёСЃР°РЅРёРµ, РїСЂРµРїРѕРґР°РІР°С‚РµР»Рё Рё СЃРµСЂРІРёСЃС‹ РЎР¤РЈ.")
         await begin_setup(message, user_id, state)
 
     @dp.message(Command("group"))
@@ -334,7 +334,7 @@ async def run_bot():
         user = get_user(message.from_user.id)
         if not user or not (user.get("api_name") or "").strip():
             await message.answer(
-                "Сначала выбери группу — команда /group.",
+                "РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РіСЂСѓРїРїСѓ вЂ” РєРѕРјР°РЅРґР° /group.",
                 reply_markup=main_keyboard(message.from_user.id),
             )
             return
@@ -344,11 +344,11 @@ async def run_bot():
     async def cmd_teacher(message: types.Message, command: CommandObject, state: FSMContext):
         query = (command.args or "").strip()
         if not query:
-            await message.answer("Напиши фамилию: /teacher Иванов")
+            await message.answer("РќР°РїРёС€Рё С„Р°РјРёР»РёСЋ: /teacher РРІР°РЅРѕРІ")
             return
         await run_teacher_search(message, query, state)
 
-    # ---------------- выбор группы ----------------
+    # ---------------- РІС‹Р±РѕСЂ РіСЂСѓРїРїС‹ ----------------
 
     @dp.callback_query(Setup.institute, F.data.startswith("inst_page:"))
     async def inst_page(callback, state):
@@ -368,7 +368,7 @@ async def run_bot():
         groups = sorted(catalog[institute])
         await state.update_data(institute=institute, groups=groups)
         await callback.message.edit_text(
-            f"Шаг 2 из 3. {esc(institute)}\nВыбери группу:",
+            f"РЁР°Рі 2 РёР· 3. {esc(institute)}\nР’С‹Р±РµСЂРё РіСЂСѓРїРїСѓ:",
             parse_mode="HTML",
             reply_markup=paged_keyboard(groups, 0, "grp"),
         )
@@ -396,9 +396,9 @@ async def run_bot():
 
         await state.update_data(group=group, subgroups=subgroups)
         buttons = [[InlineKeyboardButton(text=s, callback_data=f"sub:{i}")] for i, s in enumerate(subgroups)]
-        buttons.append([InlineKeyboardButton(text="Отмена", callback_data="setup_cancel")])
+        buttons.append([InlineKeyboardButton(text="РћС‚РјРµРЅР°", callback_data="setup_cancel")])
         await callback.message.edit_text(
-            f"Шаг 3 из 3. {esc(group)}\nВыбери подгруппу:",
+            f"РЁР°Рі 3 РёР· 3. {esc(group)}\nР’С‹Р±РµСЂРё РїРѕРґРіСЂСѓРїРїСѓ:",
             parse_mode="HTML",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=buttons),
         )
@@ -427,12 +427,12 @@ async def run_bot():
         await state.clear()
         user = get_user(callback.from_user.id)
         await callback.message.edit_text(
-            f"Готово. Твоя группа: <b>{esc(display)}</b>\n{esc(institute)}",
+            f"Р“РѕС‚РѕРІРѕ. РўРІРѕСЏ РіСЂСѓРїРїР°: <b>{esc(display)}</b>\n{esc(institute)}",
             parse_mode="HTML",
         )
         await callback.message.answer(
-            "Теперь доступны расписание, преподаватели и уведомления.\n"
-            "Выбор сохранён и в боте, и в приложении.",
+            "РўРµРїРµСЂСЊ РґРѕСЃС‚СѓРїРЅС‹ СЂР°СЃРїРёСЃР°РЅРёРµ, РїСЂРµРїРѕРґР°РІР°С‚РµР»Рё Рё СѓРІРµРґРѕРјР»РµРЅРёСЏ.\n"
+            "Р’С‹Р±РѕСЂ СЃРѕС…СЂР°РЅС‘РЅ Рё РІ Р±РѕС‚Рµ, Рё РІ РїСЂРёР»РѕР¶РµРЅРёРё.",
             reply_markup=main_keyboard(callback.from_user.id),
         )
 
@@ -440,14 +440,14 @@ async def run_bot():
     async def setup_cancel(callback, state):
         await callback.answer()
         await state.clear()
-        await callback.message.edit_text("Настройка отменена. Команда /start вернёт меню.")
+        await callback.message.edit_text("РќР°СЃС‚СЂРѕР№РєР° РѕС‚РјРµРЅРµРЅР°. РљРѕРјР°РЅРґР° /start РІРµСЂРЅС‘С‚ РјРµРЅСЋ.")
 
     @dp.callback_query(F.data == "change_group")
     async def change_group(callback, state):
         await callback.answer()
         await begin_setup(callback.message, callback.from_user.id, state)
 
-    # ---------------- расписание ----------------
+    # ---------------- СЂР°СЃРїРёСЃР°РЅРёРµ ----------------
 
     @dp.callback_query(F.data.startswith("day:"))
     async def day_cb(callback):
@@ -456,7 +456,7 @@ async def run_bot():
         if user and (user.get("api_name") or "").strip():
             await send_schedule(callback.message, user, "day", int(callback.data.split(":")[1]))
         else:
-            await callback.message.answer("Сначала выбери группу: /group")
+            await callback.message.answer("РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РіСЂСѓРїРїСѓ: /group")
 
     @dp.callback_query(F.data == "week")
     async def week_cb(callback):
@@ -465,53 +465,53 @@ async def run_bot():
         if user and (user.get("api_name") or "").strip():
             await send_schedule(callback.message, user, "week")
         else:
-            await callback.message.answer("Сначала выбери группу: /group")
+            await callback.message.answer("РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РіСЂСѓРїРїСѓ: /group")
 
     @dp.callback_query(F.data == "now")
     async def now_cb(callback):
         await callback.answer()
         user = get_user(callback.from_user.id)
         if not user or not (user.get("api_name") or "").strip():
-            await callback.message.answer("Сначала выбери группу: /group")
+            await callback.message.answer("РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РіСЂСѓРїРїСѓ: /group")
             return
         try:
             raw, stale, _ = await get_lessons(user["api_name"])
         except Exception:
-            await callback.message.answer("Не удалось обновить расписание. Попробуй позже.")
+            await callback.message.answer("РќРµ СѓРґР°Р»РѕСЃСЊ РѕР±РЅРѕРІРёС‚СЊ СЂР°СЃРїРёСЃР°РЅРёРµ. РџРѕРїСЂРѕР±СѓР№ РїРѕР·Р¶Рµ.")
             return
         status = get_current_status(raw)
         if status["state"] == "active":
             answer = (
-                f"Сейчас идёт занятие\n\n{format_lesson(status['active'])}\n\n"
-                f"До конца примерно {status['remaining']} мин."
+                f"РЎРµР№С‡Р°СЃ РёРґС‘С‚ Р·Р°РЅСЏС‚РёРµ\n\n{format_lesson(status['active'])}\n\n"
+                f"Р”Рѕ РєРѕРЅС†Р° РїСЂРёРјРµСЂРЅРѕ {status['remaining']} РјРёРЅ."
             )
         elif status["state"] == "next":
-            answer = f"Сейчас свободное время\n\nСледующая пара:\n{format_lesson(status['next'])}"
+            answer = f"РЎРµР№С‡Р°СЃ СЃРІРѕР±РѕРґРЅРѕРµ РІСЂРµРјСЏ\n\nРЎР»РµРґСѓСЋС‰Р°СЏ РїР°СЂР°:\n{format_lesson(status['next'])}"
         else:
-            answer = "Сейчас занятий нет — на сегодня всё."
+            answer = "РЎРµР№С‡Р°СЃ Р·Р°РЅСЏС‚РёР№ РЅРµС‚ вЂ” РЅР° СЃРµРіРѕРґРЅСЏ РІСЃС‘."
         if stale:
-            answer += "\n\nСФУ недоступен, данные из кэша."
+            answer += "\n\nРЎР¤РЈ РЅРµРґРѕСЃС‚СѓРїРµРЅ, РґР°РЅРЅС‹Рµ РёР· РєСЌС€Р°."
         await callback.message.answer(answer, parse_mode="HTML", reply_markup=main_keyboard(callback.from_user.id))
 
-    # ---------------- преподаватели ----------------
+    # ---------------- РїСЂРµРїРѕРґР°РІР°С‚РµР»Рё ----------------
 
     @dp.callback_query(F.data == "teacher")
     async def teacher_start(callback, state):
         await callback.answer()
         user = get_user(callback.from_user.id)
         if not user or not (user.get("api_name") or "").strip():
-            await callback.message.answer("Сначала выбери группу: /group")
+            await callback.message.answer("РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РіСЂСѓРїРїСѓ: /group")
             return
         await callback.message.answer(
-            "Напиши фамилию преподавателя — например, «Иванов».\n"
-            "Поиск идёт по расписанию всех групп твоего института."
+            "РќР°РїРёС€Рё С„Р°РјРёР»РёСЋ РїСЂРµРїРѕРґР°РІР°С‚РµР»СЏ вЂ” РЅР°РїСЂРёРјРµСЂ, В«РРІР°РЅРѕРІВ».\n"
+            "РџРѕРёСЃРє РёРґС‘С‚ РїРѕ СЂР°СЃРїРёСЃР°РЅРёСЋ РІСЃРµС… РіСЂСѓРїРї С‚РІРѕРµРіРѕ РёРЅСЃС‚РёС‚СѓС‚Р°."
         )
         await state.set_state(Setup.teacher)
 
     @dp.message(Setup.teacher)
     async def teacher_search(message: types.Message, state: FSMContext):
         query = (message.text or "").strip()
-        # Команды не считаем поисковым запросом: /group и /start должны работать всегда.
+        # РљРѕРјР°РЅРґС‹ РЅРµ СЃС‡РёС‚Р°РµРј РїРѕРёСЃРєРѕРІС‹Рј Р·Р°РїСЂРѕСЃРѕРј: /group Рё /start РґРѕР»Р¶РЅС‹ СЂР°Р±РѕС‚Р°С‚СЊ РІСЃРµРіРґР°.
         if query.startswith("/"):
             await state.clear()
             return
@@ -522,53 +522,53 @@ async def run_bot():
     async def run_teacher_search(message, query: str, state: FSMContext):
         user = get_user(message.from_user.id)
         if not user or not (user.get("institute") or "").strip():
-            await message.answer("Сначала выбери группу: /group")
+            await message.answer("РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РіСЂСѓРїРїСѓ: /group")
             return
-        note = await message.answer("Ищу преподавателя в расписании института…")
+        note = await message.answer("РС‰Сѓ РїСЂРµРїРѕРґР°РІР°С‚РµР»СЏ РІ СЂР°СЃРїРёСЃР°РЅРёРё РёРЅСЃС‚РёС‚СѓС‚Р°вЂ¦")
         try:
             catalog = await load_catalog()
             institute = user["institute"]
             if institute not in catalog:
-                await note.edit_text("Институт не найден в каталоге. Смени группу: /group")
+                await note.edit_text("РРЅСЃС‚РёС‚СѓС‚ РЅРµ РЅР°Р№РґРµРЅ РІ РєР°С‚Р°Р»РѕРіРµ. РЎРјРµРЅРё РіСЂСѓРїРїСѓ: /group")
                 return
             index = await build_teacher_index(catalog, institute)
             found = search_teachers(index, query, limit=8)
         except Exception:
-            log.exception("Ошибка поиска преподавателя")
-            await note.edit_text("Не удалось выполнить поиск. Попробуй позже.")
+            log.exception("РћС€РёР±РєР° РїРѕРёСЃРєР° РїСЂРµРїРѕРґР°РІР°С‚РµР»СЏ")
+            await note.edit_text("РќРµ СѓРґР°Р»РѕСЃСЊ РІС‹РїРѕР»РЅРёС‚СЊ РїРѕРёСЃРє. РџРѕРїСЂРѕР±СѓР№ РїРѕР·Р¶Рµ.")
             return
 
         if not found:
             await note.edit_text(
-                f"По запросу «{esc(query)}» никого не нашлось.\n"
-                "Попробуй только фамилию или её часть.",
+                f"РџРѕ Р·Р°РїСЂРѕСЃСѓ В«{esc(query)}В» РЅРёРєРѕРіРѕ РЅРµ РЅР°С€Р»РѕСЃСЊ.\n"
+                "РџРѕРїСЂРѕР±СѓР№ С‚РѕР»СЊРєРѕ С„Р°РјРёР»РёСЋ РёР»Рё РµС‘ С‡Р°СЃС‚СЊ.",
                 parse_mode="HTML",
                 reply_markup=main_keyboard(message.from_user.id),
             )
             return
 
-        lines = [f"Преподаватели по запросу «{esc(query)}»"]
+        lines = [f"РџСЂРµРїРѕРґР°РІР°С‚РµР»Рё РїРѕ Р·Р°РїСЂРѕСЃСѓ В«{esc(query)}В»"]
         for entry in found[:8]:
             subjects = entry["subjects"][:3]
             groups = entry["groups"][:4]
             lines.append(
                 f"<b>{esc(entry['teacher'])}</b>\n"
                 + (f"{esc(', '.join(subjects))}\n" if subjects else "")
-                + (f"Группы: {esc(', '.join(groups))}" if groups else "")
+                + (f"Р“СЂСѓРїРїС‹: {esc(', '.join(groups))}" if groups else "")
             )
         await note.delete()
         await safe_answer(message, "\n\n".join(lines), main_keyboard(message.from_user.id))
 
-    # ---------------- сервисы и настройки ----------------
+    # ---------------- СЃРµСЂРІРёСЃС‹ Рё РЅР°СЃС‚СЂРѕР№РєРё ----------------
 
     @dp.callback_query(F.data == "eios")
     async def eios_cb(callback):
         await callback.answer()
         links = get_eios_links()
         rows = [[InlineKeyboardButton(text=item["title"], url=item["url"])] for item in links]
-        rows.append([InlineKeyboardButton(text="В меню", callback_data="back")])
+        rows.append([InlineKeyboardButton(text="Р’ РјРµРЅСЋ", callback_data="back")])
         await callback.message.answer(
-            "Сервисы СФУ",
+            "РЎРµСЂРІРёСЃС‹ РЎР¤РЈ",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=rows),
         )
 
@@ -577,23 +577,23 @@ async def run_bot():
         await callback.answer()
         user = get_user(callback.from_user.id)
         if not user:
-            await callback.message.answer("Сначала выбери группу: /group")
+            await callback.message.answer("РЎРЅР°С‡Р°Р»Р° РІС‹Р±РµСЂРё РіСЂСѓРїРїСѓ: /group")
             return
         enabled = bool(user["notif_enabled"])
-        target = "завтра" if user["notif_target"] else "сегодня"
+        target = "Р·Р°РІС‚СЂР°" if user["notif_target"] else "СЃРµРіРѕРґРЅСЏ"
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(
-                    text=f"Рассылка: {'вкл' if enabled else 'выкл'}",
+                    text=f"Р Р°СЃСЃС‹Р»РєР°: {'РІРєР»' if enabled else 'РІС‹РєР»'}",
                     callback_data="notif_toggle",
                 )],
-                [InlineKeyboardButton(text=f"Время: {user['notif_time']}", callback_data="notif_time")],
-                [InlineKeyboardButton(text=f"Присылать: {target}", callback_data="notif_target")],
-                [InlineKeyboardButton(text="В меню", callback_data="back")],
+                [InlineKeyboardButton(text=f"Р’СЂРµРјСЏ: {user['notif_time']}", callback_data="notif_time")],
+                [InlineKeyboardButton(text=f"РџСЂРёСЃС‹Р»Р°С‚СЊ: {target}", callback_data="notif_target")],
+                [InlineKeyboardButton(text="Р’ РјРµРЅСЋ", callback_data="back")],
             ]
         )
         await callback.message.answer(
-            f"Настройки\n{profile_line(user)}",
+            f"РќР°СЃС‚СЂРѕР№РєРё\n{profile_line(user)}",
             parse_mode="HTML",
             reply_markup=keyboard,
         )
@@ -604,7 +604,7 @@ async def run_bot():
         user = get_user(callback.from_user.id)
         if user:
             update_user(callback.from_user.id, notif_enabled=0 if user["notif_enabled"] else 1)
-            await callback.message.answer("Готово.", reply_markup=main_keyboard(callback.from_user.id))
+            await callback.message.answer("Р“РѕС‚РѕРІРѕ.", reply_markup=main_keyboard(callback.from_user.id))
 
     @dp.callback_query(F.data == "notif_time")
     async def notif_time(callback):
@@ -616,7 +616,7 @@ async def run_bot():
                 for i in range(0, len(times), 3)
             ]
         )
-        await callback.message.answer("Выбери время рассылки:", reply_markup=keyboard)
+        await callback.message.answer("Р’С‹Р±РµСЂРё РІСЂРµРјСЏ СЂР°СЃСЃС‹Р»РєРё:", reply_markup=keyboard)
 
     @dp.callback_query(F.data.startswith("time:"))
     async def set_time(callback):
@@ -625,7 +625,7 @@ async def run_bot():
         if re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", value):
             update_user(callback.from_user.id, notif_time=value)
             await callback.message.answer(
-                f"Рассылка в {value}.",
+                f"Р Р°СЃСЃС‹Р»РєР° РІ {value}.",
                 reply_markup=main_keyboard(callback.from_user.id),
             )
 
@@ -635,18 +635,19 @@ async def run_bot():
         user = get_user(callback.from_user.id)
         if user:
             update_user(callback.from_user.id, notif_target=0 if user["notif_target"] else 1)
-            await callback.message.answer("Готово.", reply_markup=main_keyboard(callback.from_user.id))
+            await callback.message.answer("Р“РѕС‚РѕРІРѕ.", reply_markup=main_keyboard(callback.from_user.id))
 
     @dp.callback_query(F.data == "back")
     async def back(callback):
         await callback.answer()
-        await callback.message.answer("Меню", reply_markup=main_keyboard(callback.from_user.id))
+        await callback.message.answer("РњРµРЅСЋ", reply_markup=main_keyboard(callback.from_user.id))
 
     scheduler = create_scheduler(bot, main_keyboard)
     scheduler.start()
-    log.info("SFU Student запущен")
+    log.info("SFU Student Р·Р°РїСѓС‰РµРЅ")
     try:
         await dp.start_polling(bot)
     finally:
         scheduler.shutdown(wait=False)
         await bot.session.close()
+
